@@ -3,7 +3,7 @@
 from flask import Blueprint
 import requests,json
 blueprint = Blueprint('public', __name__, static_folder='../static')
-from my_assist.lib import db as database
+from my_assist.util import db as database
 
 @blueprint.route('/', methods=['GET', 'POST'])
 def home():
