@@ -16,18 +16,19 @@ class Config(object):
 
 class ProdConfig(Config):
     """Production configuration."""
-
     ENV = 'prod'
     DEBUG = False
-
-
+    SQLALCHEMY_DATABASE_URI =  "postgres://fukwbmzyejoizc:a40d2f739be06275a24b7416bd57125d356ec981623f7119fe8875f6ef479e4d@ec2-184-73-236-170.compute-1.amazonaws.com:5432/dsbftj344l2it"
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 class DevConfig(Config):
     """Development configuration."""
 
     ENV = 'dev'
     DEBUG = True
     THREADED = True
-
+    SQLALCHEMY_DATABASE_URI = "postgres://fukwbmzyejoizc:a40d2f739be06275a24b7416bd57125d356ec981623f7119fe8875f6ef479e4d@ec2-184-73-236-170.compute-1.amazonaws.com:5432/dsbftj344l2it"
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    
 class TestConfig(Config):
     """Test configuration."""
 
