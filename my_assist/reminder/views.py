@@ -2,7 +2,7 @@
 """ Reminder section """
 from flask import Blueprint,jsonify,request
 import requests,json
-from models import statereminder
+from .models import statereminder
 from my_assist.extensions import manager
 from models import db
 
