@@ -52,9 +52,19 @@ def getstatereminder(state,event):
             return tell("No reminders for {}".format(state))
         else:
             return tell("No reminders for {} {}".format(state,event))
-    for s in sdata:
-        ret.append(s["attributes"]["reminder"])
-    return tell("You have the following reminders for {}:".format(state)+ ",".join(ret))
+
+    resp = ask("Here's reminders for {}".format(state))
+    remlist = resp.build_list("Reminders for {}".format(state))
+    for i,s in enumerate(sdata):
+        rem=s["attributes"]["reminder"]
+        ret.append(rem)
+        remlist.add_item(title=rem, # title sent as query for Actions
+                key=i,
+                img_url="",
+                description="")
+    return remlist
+
+
 
 @assist.action('deletestatereminder')
 def deletestatereminder(state,event):
