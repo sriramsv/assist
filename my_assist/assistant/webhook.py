@@ -59,7 +59,7 @@ def getstatereminder(state,event):
         rem=s["attributes"]["reminder"]
         ret.append(rem)
         remlist.add_item(title=rem, # title sent as query for Actions
-                key=i,
+                key=i+1
                 img_url="",
                 description="")
     return remlist
