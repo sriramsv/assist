@@ -19,6 +19,7 @@ lib64
 env
 *.log
 
+
 # Installer logs
 pip-log.txt
 
@@ -48,3 +49,7 @@ output/
 
 myflaskapp/
 bower_components
+
+
+# heroku
+.env

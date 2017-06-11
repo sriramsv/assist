@@ -2,7 +2,7 @@
 """The flask app module, containing the app factory function."""
 from flask import Flask, render_template
 import logging
-from my_assist import assistant, web,reminder,state
+from my_assist import assistant, web,reminder
 from my_assist.extensions import assist,db,manager
 from flask_restless import APIManager
 from my_assist.settings import ProdConfig
@@ -47,9 +47,7 @@ def register_blueprints(app):
     If the entire flask app consists of only the Assistant, comment out the code below.
     """
     app.register_blueprint(assistant.webhook.blueprint)
-
     app.register_blueprint(web.views.blueprint)
-    app.register_blueprint(state.views.blueprint)
     app.register_blueprint(reminder.views.blueprint)
 
     return None
