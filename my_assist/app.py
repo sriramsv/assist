@@ -2,7 +2,7 @@
 """The flask app module, containing the app factory function."""
 from flask import Flask, render_template
 import logging
-from my_assist import assistant, web,reminder
+from my_assist.api import assistant, web,reminder
 from my_assist.extensions import assist,db,manager
 from flask_restless import APIManager
 from my_assist.settings import ProdConfig
