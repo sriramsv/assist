@@ -4,7 +4,7 @@ from flask import Blueprint,jsonify,request
 import requests,json,simplejson
 from .models import statereminder
 from my_assist.extensions import manager,assist
-from my_assist.util.helper import get_base_url
+from my_assist.util.helper import get_base_url,get_template
 from flask_assistant import ask, tell,intent,context_manager
 blueprint=manager.create_api_blueprint('statereminder',statereminder,methods=['GET','POST','PATCH','DELETE'])
 
