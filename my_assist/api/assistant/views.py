@@ -10,7 +10,8 @@ from flask import Blueprint,url_for,redirect
 from flask_assistant import Assistant, ask, tell,intent,context_manager
 import requests,os,json
 from my_assist.util.helper import get_template
-from my_assist.extensions import assist
+from my_assist.extensions import assist,homeassistant
+
 blueprint = Blueprint('assist', __name__, url_prefix='/assist')
 assist.init_blueprint(blueprint)
 logging.getLogger('flask_assistant').setLevel(logging.DEBUG)
@@ -28,7 +29,8 @@ def train(state):
 
 @assist.action("garagestatus")
 def gstatus():
-    r=requests.get("https://jarvispi.duckdns.org/api/states/cover.garage?api_password="+os.getenv("HASSPWD"))
-    if r.status_code!=200:
-        return tell("Sorry,something went wrong,try again whenever you are ready")
-    return tell("Garage is currently %s" % r.json()['state'])
+    gstate=homeassistant.get_state(state="cover.garage")
+    if not gstate:
+        return tell("Something went wrong, try again whenever you are ready")
+    state=gstate['state']
+    return tell("The garage is now {}".format(state))
