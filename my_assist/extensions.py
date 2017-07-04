@@ -2,7 +2,7 @@
 """Extensions module. Each extension is initialized in the app factory located in app.py."""
 from flask_assistant import Assistant
 import os
-from util.hass import Hass
+from my_assist.util.hass import Hass
 from flask import Flask
 from flask_mongoalchemy import MongoAlchemy
 db=MongoAlchemy()

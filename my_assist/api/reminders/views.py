@@ -1,5 +1,5 @@
 from flask_restful import marshal_with,Api,Resource,marshal
-from models import reminder,Reminders
+from .models import reminder,Reminders
 from my_assist.extensions import db
 from flask import Blueprint,request,jsonify,redirect,url_for
 import logging,json
