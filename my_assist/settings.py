@@ -18,17 +18,17 @@ class ProdConfig(Config):
     """Production configuration."""
     ENV = 'prod'
     DEBUG = False
-    SQLALCHEMY_DATABASE_URI =  "postgres://fukwbmzyejoizc:a40d2f739be06275a24b7416bd57125d356ec981623f7119fe8875f6ef479e4d@ec2-184-73-236-170.compute-1.amazonaws.com:5432/dsbftj344l2it"
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    MONGOALCHEMY_CONNECTION_STRING="mongodb://apiaihandler:apiai@ds147979.mlab.com:47979/heroku_jtsbsf80"
+    MONGOALCHEMY_DATABASE="heroku_jtsbsf80"
+
 class DevConfig(Config):
     """Development configuration."""
 
     ENV = 'dev'
     DEBUG = True
     THREADED = True
-    SQLALCHEMY_DATABASE_URI = "postgres://fukwbmzyejoizc:a40d2f739be06275a24b7416bd57125d356ec981623f7119fe8875f6ef479e4d@ec2-184-73-236-170.compute-1.amazonaws.com:5432/dsbftj344l2it"
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    
+    MONGOALCHEMY_CONNECTION_STRING="mongodb://apiaihandler:apiai@ds147979.mlab.com:47979/heroku_jtsbsf80"
+
 class TestConfig(Config):
     """Test configuration."""
 
