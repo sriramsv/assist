@@ -3,6 +3,7 @@ from .models import reminder,Reminders
 from my_assist.extensions import db
 from flask import Blueprint,request,jsonify,redirect,url_for
 import logging,json
+from collections import defaultdict
 
 logging.basicConfig(level=logging.DEBUG)
 blueprint=Blueprint("reminder",__name__)
@@ -12,8 +13,6 @@ class Reminder(Resource):
 
     @marshal_with(reminder)
     def post(self,state,event):
-        logging.debug(request.headers["Content-Type"])
-        logging.debug("json",request.get_json())
         data=request.get_json()
         r=Reminders(reminder=data['reminder'],state=state.lower(),event=event.lower())
         r.save()
@@ -25,7 +24,6 @@ class Reminder(Resource):
         logging.debug(data)
         return data
 
-    @marshal_with(reminder)
     def delete(self,state,event):
         rem=request.get_json()['reminder']
         f=Reminders.query.filter(Reminders.reminder==rem and Reminders.state==state.lower() and Reminders.event==event.lower()).first()
@@ -34,11 +32,13 @@ class Reminder(Resource):
         return "deleted"
 
 class ReminderList(Resource):
-    @marshal_with(reminder)
+    # @marshal_with(reminder)
     def get(self):
+        s=defaultdict(lambda: defaultdict(list))
         data=Reminders.query.all()
-        logging.debug(data)
-        return data
+        for d in iter(data):
+            s[d.state][d.event].append(d.reminder)
+        return jsonify(s)
 
 api.add_resource(Reminder,'/reminder/<string:state>/<string:event>')
 api.add_resource(ReminderList,'/reminders')

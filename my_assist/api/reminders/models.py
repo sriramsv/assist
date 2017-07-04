@@ -17,4 +17,3 @@ class Reminders(db.Document):
     event=db.StringField()
     date_created=db.CreatedField()
     date_updated=db.ModifiedField()
-    reminder_index = Index().ascending('reminder').unique()
