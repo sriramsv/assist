@@ -24,7 +24,7 @@ def welcome():
 
 @assist.action('train')
 def train(state):
-    r=requests.get(base_url+url_for('public.train',state=state))
+    r=requests.get(url_for('public.train',state=state,_external=True))
     return tell(r.text)
 
 @assist.action("garagestatus")

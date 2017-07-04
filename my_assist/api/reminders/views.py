@@ -11,30 +11,27 @@ api=Api(blueprint)
 class Reminder(Resource):
 
     @marshal_with(reminder)
-    def post(self,state=None,event=None):
+    def post(self,state,event):
+        logging.debug(request.headers["Content-Type"])
+        logging.debug("json",request.get_json())
         data=request.get_json()
-        logging.debug(data)
         r=Reminders(reminder=data['reminder'],state=state.lower(),event=event.lower())
         r.save()
         return r
 
     @marshal_with(reminder)
     def get(self,state,event):
-        state=state.lower()
-        event=event.lower()
-        data=Reminders.query.filter(Reminders.state==state and Reminders.event==event).all()
+        data=Reminders.query.filter(Reminders.state==state.lower() and Reminders.event==event.lower()).all()
         logging.debug(data)
         return data
 
     @marshal_with(reminder)
     def delete(self,state,event):
-        state=state.lower()
-        event=event.lower()
         rem=request.get_json()['reminder']
-        f=Reminders.query.filter(Reminders.reminder==rem and Reminders.state==state and Reminders.event==event).first()
+        f=Reminders.query.filter(Reminders.reminder==rem and Reminders.state==state.lower() and Reminders.event==event.lower()).first()
         logging.debug(f)
         f.remove()
-        redirect(url_for("reminder.reminderlist"))
+        return "deleted"
 
 class ReminderList(Resource):
     @marshal_with(reminder)

@@ -28,7 +28,6 @@ def register_extensions(app):
     """
     with app.app_context():
         db.init_app(app)
-
     return None
 
 

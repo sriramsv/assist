@@ -1,5 +1,6 @@
 from flask_restful import fields
 from my_assist.extensions import db
+from mongoalchemy.document import Index
 import datetime
 
 reminder= {
@@ -16,3 +17,4 @@ class Reminders(db.Document):
     event=db.StringField()
     date_created=db.CreatedField()
     date_updated=db.ModifiedField()
+    reminder_index = Index().ascending('reminder').unique()
