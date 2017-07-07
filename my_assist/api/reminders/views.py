@@ -1,6 +1,6 @@
 from flask_restful import marshal_with,Api,Resource,marshal
 from .models import reminder,Reminders
-from my_assist.extensions import db
+from my_assist.extensions import db,states
 from flask import Blueprint,request,jsonify,redirect,url_for
 import logging,json
 from collections import defaultdict
@@ -32,13 +32,10 @@ class Reminder(Resource):
         return "deleted"
 
 class ReminderList(Resource):
-    # @marshal_with(reminder)
+    @marshal_with(reminder)
     def get(self):
-        s=defaultdict(lambda: defaultdict(list))
         data=Reminders.query.all()
-        for d in iter(data):
-            s[d.state][d.event].append(d.reminder)
-        return jsonify(s)
+        return data
 
 api.add_resource(Reminder,'/reminder/<string:state>/<string:event>')
 api.add_resource(ReminderList,'/reminders')
