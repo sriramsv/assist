@@ -4,11 +4,12 @@ from my_assist.extensions import db,states
 from flask import Blueprint,request,jsonify,redirect,url_for
 import logging,json
 from collections import defaultdict
+from mongoalchemy.session import Session
 
 logging.basicConfig(level=logging.DEBUG)
 blueprint=Blueprint("reminder",__name__)
 api=Api(blueprint)
-
+from flask import current_app
 class Reminder(Resource):
 
     @marshal_with(reminder)
@@ -20,9 +21,11 @@ class Reminder(Resource):
 
     @marshal_with(reminder)
     def get(self,state,event):
-        data=Reminders.query.filter(Reminders.state==state.lower() and Reminders.event==event.lower()).all()
-        logging.debug(data)
-        return data
+        with Session.connect('Reminders') as s:
+            data = s.query(Reminders).filter(Reminders.state == state.lower() and Reminders.event==event.lower()).all()
+            # data=Reminders.query.filter(Reminders.state==state.lower() and Reminders.event==event.lower()).all()
+            logging.debug(data)
+            return data
 
     def delete(self,state,event):
         rem=request.get_json()['reminder']
