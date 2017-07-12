@@ -21,15 +21,13 @@ class Reminder(Resource):
 
     @marshal_with(reminder)
     def get(self,state,event):
-        with Session.connect('Reminders') as s:
-            data = s.query(Reminders).filter(Reminders.state == state.lower() and Reminders.event==event.lower()).all()
-            # data=Reminders.query.filter(Reminders.state==state.lower() and Reminders.event==event.lower()).all()
+            data=Reminders.query.filter(Reminders.state==state.lower(),Reminders.event==event.lower()).all()
             logging.debug(data)
             return data
 
     def delete(self,state,event):
         rem=request.get_json()['reminder']
-        f=Reminders.query.filter(Reminders.reminder==rem and Reminders.state==state.lower() and Reminders.event==event.lower()).first()
+        f=Reminders.query.filter(Reminders.reminder==rem,Reminders.state==state.lower(),Reminders.event==event.lower()).first()
         logging.debug(f)
         f.remove()
         return "deleted"
