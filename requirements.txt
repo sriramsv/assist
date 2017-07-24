@@ -42,7 +42,6 @@ pytz==2017.2
 redis==2.10.5
 regex==2017.7.11
 requests==2.18.1
-ruamel.ordereddict==0.4.9
 ruamel.yaml==0.15.17
 simplejson==3.10.0
 six==1.10.0
