@@ -1,7 +1,7 @@
 from flask_restful import marshal_with,Api,Resource,marshal
 from .models import reminder,Reminders
 from my_assist.extensions import db,states
-from flask import Blueprint,request,jsonify,redirect,url_for
+from flask import Blueprint,request,jsonify,redirect,url_for,abort
 import logging,json
 from collections import defaultdict
 from mongoalchemy.session import Session
@@ -21,7 +21,8 @@ class Reminder(Resource):
 
     @marshal_with(reminder)
     def get(self,state,event):
-            data=Reminders.query.filter(Reminders.state==state.lower(),Reminders.event==event.lower()).all()
+            if event:
+                data=Reminders.query.filter(Reminders.state==state.lower(),Reminders.event==event.lower()).all()
             logging.debug(data)
             return data
 
@@ -29,7 +30,10 @@ class Reminder(Resource):
         rem=request.get_json()['reminder']
         f=Reminders.query.filter(Reminders.reminder==rem,Reminders.state==state.lower(),Reminders.event==event.lower()).first()
         logging.debug(f)
-        f.remove()
+        try:
+            f.remove()
+        except:
+            abort(400)
         return "deleted"
 
 class ReminderList(Resource):

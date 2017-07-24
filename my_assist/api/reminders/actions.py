@@ -26,3 +26,7 @@ def getreminder(state,event):
     for d in data:
         speech.append(d['reminder'])
     return tell("you have the following reminders: {}".format(",".join(speech)))
+
+@assist.action("deletestatereminder")
+def deletereminder(state,event,rem):
+    pass

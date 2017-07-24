@@ -8,7 +8,7 @@
 import logging
 from flask import Blueprint,url_for,redirect
 from flask_assistant import Assistant, ask, tell,intent,context_manager
-import requests,os,json
+import requests,os,json,datetime,parsedatetime
 from my_assist.util.helper import get_template
 from my_assist.extensions import assist,homeassistant
 
@@ -16,6 +16,14 @@ blueprint = Blueprint('assist', __name__, url_prefix='/assist')
 assist.init_blueprint(blueprint)
 logging.getLogger('flask_assistant').setLevel(logging.DEBUG)
 
+
+servicelist={}
+switch={"on":"homeassistant/turn_on","off":"homeassistant/turn_off"}
+garage_switch={"on":"cover/open_cover","off":"cover/close_cover"}
+
+servicelist['switch.fan']=switch
+servicelist['light.bedroom_light']=switch
+servicelist['cover.garage']=garage_switch
 
 @assist.action('Greetings')
 def welcome():
@@ -34,3 +42,16 @@ def gstatus():
         return tell("Something went wrong, try again whenever you are ready")
     state=gstate['state']
     return tell("The garage is now {}".format(state))
+
+
+@assist.action("lateraction")
+def lateraction(entity_id,delay,switch):
+    service=servicelist[entity_id][switch]
+    cal = parsedatetime.Calendar()
+    delaytime,ok=cal.parse(delay)
+    delaytime=datetime.datetime(*delaytime[:6])-datetime.datetime.now()
+    logging.debug(delaytime)
+    seconds=abs(delaytime.total_seconds())
+    data={"service":service,"delay":seconds,"entity_id":entity_id}
+    s=homeassistant.fire_event("schedule",data)
+    return tell("ok scheduled")

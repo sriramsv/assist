@@ -26,6 +26,11 @@ class Hass():
         url=self.url+"/api/services/{}/{}".format(domain,service)
         return call_post(url,self.headers,service_data)
 
+
+    def fire_event(self,event_name,service_data={}):
+        url=self.url+"/api/events/{}".format(event_name)
+        return call_post(url,self.headers,service_data)
+        
     def get_state(self,state):
         url=self.url+"/api/states/{}".format(state)
         return call_get(url,self.headers)
