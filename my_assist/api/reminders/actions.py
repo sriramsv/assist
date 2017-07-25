@@ -1,5 +1,5 @@
 from my_assist.extensions import assist
-from flask_assistant import tell
+from flask_assistant import tell,ask,event, build_item
 import requests
 from flask import url_for
 import json
@@ -23,9 +23,12 @@ def getreminder(state,event):
     data=r.json()
     if len(data)==0:
         return tell("no reminders currently for {} {}".format(state,event))
+    resp = ask("Here is a list of reminders for {} {}".format(state,event))
+    mylist = resp.build_list("Here is a list of reminders for {} {}".format(state,event))
     for d in data:
-        speech.append(d['reminder'])
-    return tell("you have the following reminders: {}".format(",".join(speech)))
+        new_item = build_item(title=d['reminder'])
+        mylist.include_items(new_item)
+    return mylist
 
 @assist.action("deletestatereminder")
 def deletereminder(state,event,rem):

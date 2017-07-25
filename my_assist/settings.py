@@ -20,6 +20,7 @@ class ProdConfig(Config):
     DEBUG = False
     MONGOALCHEMY_CONNECTION_STRING="mongodb://apiaihandler:apiai@ds147979.mlab.com:47979/heroku_jtsbsf80"
     MONGOALCHEMY_DATABASE="heroku_jtsbsf80"
+    ASSIST_ACTIONS_ON_GOOGLE=True
 
 class DevConfig(Config):
     """Development configuration."""
