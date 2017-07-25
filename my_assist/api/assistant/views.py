@@ -35,13 +35,14 @@ def train(state):
     r=requests.get(url_for('public.train',state=state,_external=True))
     return tell(r.text)
 
-@assist.action("garagestatus")
-def gstatus():
-    gstate=homeassistant.get_state(state="cover.garage")
+@assist.action("devicestatus")
+def gstatus(device):
+    gstate=homeassistant.get_state(state=device)
+    logging.info(gstate)
     if not gstate:
         return tell("Something went wrong, try again whenever you are ready")
     state=gstate['state']
-    return tell("The garage is now {}".format(state))
+    return tell("The {} is now {}".format(device,state))
 
 
 @assist.action("lateraction")
