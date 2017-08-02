@@ -26,15 +26,7 @@ class Reminder(Resource):
             logging.debug(data)
             return data
 
-    def delete(self,state,event):
-        rem=request.get_json()['reminder']
-        f=Reminders.query.filter(Reminders.reminder==rem,Reminders.state==state.lower(),Reminders.event==event.lower()).first()
-        logging.debug(f)
-        try:
-            f.remove()
-        except:
-            abort(400)
-        return "deleted"
+
 
 class ReminderList(Resource):
     @marshal_with(reminder)
@@ -49,6 +41,15 @@ class ReminderQuery(Resource):
         data=Reminders.query.filter(Reminders.reminder==qreminder.lower()).all()
         logging.debug(data)
         return data
+    @marshal_with(reminder)
+    def delete(self,qreminder):
+        f=Reminders.query.filter(Reminders.reminder==qreminder.lower()).first()
+        logging.debug(f)
+        try:
+            f.remove()
+        except:
+            abort(400)
+        return "deleted"
 api.add_resource(Reminder,'/reminder/<string:state>/<string:event>')
 api.add_resource(ReminderList,'/reminders')
 api.add_resource(ReminderQuery,'/reminder/<string:qreminder>')

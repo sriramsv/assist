@@ -1,5 +1,6 @@
 from my_assist.extensions import assist
 from flask_assistant import tell,ask,event, build_item
+from flask_assistant import context_manager
 import requests
 from flask import url_for
 import json
@@ -12,6 +13,7 @@ def setstatereminder(reminder,state,event):
     if r.status_code!=200:
         return tell("Something went wrong, please try again later")
     return tell("Ok added your reminder")
+
 
 
 @assist.action("getstatereminder")
@@ -31,5 +33,14 @@ def getreminder(state,event):
     return mylist
 
 @assist.action("deletestatereminder")
-def deletereminder(state,event):
-    getreminder(state,event)
+def deletereminder(reminder):
+    r=requests.get(url_for("reminder.reminderquery",qreminder=reminder,_external=True))
+    if r.status_code!=200:
+        return tell("Could not fetch state reminders at this point in time")
+    data=r.json()
+    if len(data)==0:
+        return tell("no matching reminder to delete")
+    r=requests.delete(url_for("reminder.reminderquery",qreminder=reminder,_external=True))
+    if r.status_code!=200:
+        return tell("Could not delete reminder at this moment")
+    return tell("Ok deleted")
