@@ -15,7 +15,7 @@ class Reminder(Resource):
     @marshal_with(reminder)
     def post(self,state,event):
         data=request.get_json()
-        r=Reminders(reminder=data['reminder'],state=state.lower(),event=event.lower())
+        r=Reminders(reminder=data['reminder'].lower(),state=state.lower(),event=event.lower())
         r.save()
         return r
 
@@ -42,5 +42,13 @@ class ReminderList(Resource):
         data=Reminders.query.all()
         return data
 
+
+class ReminderQuery(Resource):
+    @marshal_with(reminder)
+    def get(self,qreminder):
+        data=Reminders.query.filter(Reminders.reminder==qreminder.lower()).all()
+        logging.debug(data)
+        return data
 api.add_resource(Reminder,'/reminder/<string:state>/<string:event>')
 api.add_resource(ReminderList,'/reminders')
+api.add_resource(ReminderQuery,'/reminder/<string:qreminder>')

@@ -31,5 +31,5 @@ def getreminder(state,event):
     return mylist
 
 @assist.action("deletestatereminder")
-def deletereminder(state,event,rem):
-    pass
+def deletereminder(state,event):
+    getreminder(state,event)
