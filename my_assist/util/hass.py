@@ -30,9 +30,13 @@ class Hass():
     def fire_event(self,event_name,service_data={}):
         url=self.url+"/api/events/{}".format(event_name)
         return call_post(url,self.headers,service_data)
-        
-    def get_state(self,state):
-        url=self.url+"/api/states/{}".format(state)
+
+    def get_friendly_name(self,entity_id):
+        q=self.get_state(entity_id)
+        return q['attributes']['friendly_name']
+
+    def get_state(self,entity_id):
+        url=self.url+"/api/states/{}".format(entity_id)
         return call_get(url,self.headers)
 
     def set_event(self,event="test",data={}):

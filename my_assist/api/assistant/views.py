@@ -37,12 +37,13 @@ def train(state):
 
 @assist.action("devicestatus")
 def gstatus(device):
-    gstate=homeassistant.get_state(state=device)
+    gstate=homeassistant.get_state(entity_id=device)
     logging.info(gstate)
     if not gstate:
         return tell("Something went wrong, try again whenever you are ready")
     state=gstate['state']
-    return tell("The {} is now {}".format(device,state))
+    friendly_name=gstate['attributes']['friendly_name']
+    return tell("The {} is now {}".format(friendly_name,state))
 
 
 @assist.action("lateraction")
