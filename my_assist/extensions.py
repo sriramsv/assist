@@ -6,8 +6,9 @@ from my_assist.util.hass import Hass
 from flask import Flask
 from flask_mongoalchemy import MongoAlchemy
 logging.basicConfig(level=logging.DEBUG)
+import wolframalpha
 
-
+wolfram=wolframalpha.Client(os.getenv("WOLFRAM_ALPHA_KEY"))
 db=MongoAlchemy()
 homeassistant=Hass(host="jarvispi.duckdns.org",port=443,use_ssl=True,password=os.getenv("HASSPWD"))
 assist = Assistant()

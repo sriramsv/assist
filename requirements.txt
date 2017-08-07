@@ -1,6 +1,8 @@
 aniso8601==1.2.1
+apiai==1.2.3
 appdirs==1.4.3
 APScheduler==3.3.1
+beautifulsoup4==4.6.0
 blinker==1.4
 Cerberus==0.9.2
 certifi==2017.4.17
@@ -23,12 +25,16 @@ gunicorn==19.7.1
 honcho==1.0.1
 httplib2==0.10.3
 idna==2.5
+inflect==0.2.5
 itsdangerous==0.24
+jaraco.itertools==2.0.1
 Jinja2==2.9.6
 MarkupSafe==1.0
 mimerender==0.6.0
 MongoAlchemy==0.19
 mongoengine==0.13.0
+more-itertools==3.2.0
+numpy==1.13.1
 oauth2==1.9.0.post1
 packaging==16.8
 paho-mqtt==1.2.3
@@ -50,4 +56,6 @@ transitions==0.5.3
 tzlocal==1.4
 urllib3==1.21.1
 Werkzeug==0.12.2
+wolframalpha==3.0
 WTForms==2.1
+xmltodict==0.11.0
