@@ -41,8 +41,8 @@ def gstatus(device):
     logging.info(gstate)
     if not gstate:
         return tell("Something went wrong, try again whenever you are ready")
-    state=gstate['state']
-    friendly_name=gstate['attributes']['friendly_name']
+    state=gstate.state
+    friendly_name=gstate.attributes['friendly_name']
     return tell("The {} is now {}".format(friendly_name,state))
 
 
