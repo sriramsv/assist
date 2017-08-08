@@ -40,9 +40,7 @@ class Hass():
     def get_services_for_entity(self,entity,switch):
         d=entity.split(".")[0]
         try:
-            d=self.serviceaction[d].get_services(switch)
-            return d
-
+            return d+"/"+self.serviceaction[d].get_services(switch)[0]
         except KeyError:
             return None
 
