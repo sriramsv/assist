@@ -29,6 +29,7 @@ inflect==0.2.5
 itsdangerous==0.24
 jaraco.itertools==2.0.1
 Jinja2==2.9.6
+jsontree==0.4.3
 MarkupSafe==1.0
 mimerender==0.6.0
 MongoAlchemy==0.19
