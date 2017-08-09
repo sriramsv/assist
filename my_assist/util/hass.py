@@ -1,17 +1,18 @@
 import requests,logging,json,jsontree
+from collections import defaultdict
 
 def call_get(url,headers):
     r=requests.get(url,headers=headers)
     if r.status_code!=200:
        return None
-    logging.debug(r.json())
+    # logging.debug(r.json())
     return r.json()
 
 def call_post(url,headers,data):
     r=requests.post(url,headers=headers,data=json.dumps(data))
     if r.status_code!=200:
         return None
-    logging.debug(r.json())
+    # logging.debug(r.json())
     return r.json()
 
 
@@ -39,10 +40,7 @@ class Hass():
 
     def get_services_for_entity(self,entity,switch):
         d=entity.split(".")[0]
-        try:
-            return d+"/"+self.serviceaction[d].get_services(switch)[0]
-        except KeyError:
-            return None
+        return self.serviceaction[d].get_services(switch)
 
     def fire_event(self,event_name,service_data={}):
         url=self.url+"/events/{}".format(event_name)
@@ -50,17 +48,25 @@ class Hass():
 
 
     def get_state(self,entity_id):
+        if not entity_id:
+            raise ValueError("Entity should not be blank")
         url=self.url+"/states/{}".format(entity_id)
         return jsontree.jsontree(call_get(url,self.headers))
 
-    def set_event(self,event="test",data={}):
-        url=self.url+"/event/{}".format(event)
-        return call_post(url,self.headers,data)
+    def get_entities(self):
+        states=self.states
+        name_entity_id=defaultdict(list)
+        for s in states:
+            if s.entity_id.startswith('input'):
+                continue
+            name=s.attributes['friendly_name']
+            name_entity_id[s.entity_id].append(name)
+        return name_entity_id
 
     @property
     def states(self):
         url=self.url+"/states"
-        return call_get(url,self.headers)
+        return [jsontree.jsontree(s) for s in call_get(url,self.headers)]
 
     @property
     def events(self):
@@ -82,4 +88,7 @@ class Service():
         self.d=jsontree.jsontree(data)
 
     def get_services(self,switch):
-        return filter(lambda s: switch in s, self.d.services.keys())
+        for k in self.d.services.keys():
+            if switch in k:
+                return self.d.domain+"/"+switch
+        return "homeassistant"+"/"+switch

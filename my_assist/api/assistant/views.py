@@ -11,13 +11,26 @@ from flask_assistant import Assistant, ask, tell,intent,context_manager
 import requests,os,json,datetime,parsedatetime
 from my_assist.util.helper import get_template
 from my_assist.extensions import assist,homeassistant,wolfram
-
+from flask_assistant import ApiAi
+from api_ai.models import Entity
 blueprint = Blueprint('assist', __name__, url_prefix='/assist')
 assist.init_blueprint(blueprint)
 logging.getLogger('flask_assistant').setLevel(logging.DEBUG)
 
+ne=homeassistant.get_entities()
 
+a=ApiAi()
+e=Entity("HassEntities")
+logging.info(len(ne))
+for k,v in ne.items():
+    e.add_entry(k,list(v))
 
+entitieslist=[str(s) for s in a.agent_entities]
+logging.debug(entitieslist)
+if str(e) in entitieslist:
+    a.put_entity(e.name,e.serialize)
+else:
+    a.post_entity(e.serialize)
 
 @assist.action("Default Fallback Intent")
 def default():
@@ -32,7 +45,8 @@ def train(state):
     return tell(r.text)
 
 @assist.action("devicestatus")
-def gstatus(device):
+def gstatus(entity_id):
+    device=entity_id
     gstate=homeassistant.get_state(entity_id=device)
     if not gstate:
         return tell("Something went wrong, try again whenever you are ready")
@@ -44,16 +58,26 @@ def gstatus(device):
 
 @assist.action("lateraction")
 def lateraction(entity_id,delay,switch):
-    service=homeassistant.get_services_for_entity(entity=entity_id,switch=switch)
-    cal = parsedatetime.Calendar()
-    delaytime,ok=cal.parse(delay)
-    delaytime=datetime.datetime(*delaytime[:6])-datetime.datetime.now()
-    logging.debug(delaytime)
-    seconds=abs(delaytime.total_seconds())
+    if delay:
+        service=homeassistant.get_services_for_entity(entity=entity_id,switch=switch)
+        cal = parsedatetime.Calendar()
+        delaytime,ok=cal.parse(delay)
+        delaytime=datetime.datetime(*delaytime[:6])-datetime.datetime.now()
+        logging.debug(delaytime)
+        seconds=abs(delaytime.total_seconds())
+    else:
+        delay=0
     data={"service":service,"delay":seconds,"entity_id":entity_id}
     s=homeassistant.fire_event("schedule",data)
     return tell("ok scheduled")
 
+@assist.action("scheduleaction")
+def scheduleaction(entity_id,switch):
+    service=homeassistant.get_services_for_entity(entity_id,switch)
+    logging.debug("Service:{}".format(service))
+    if not homeassistant.call_service(domain=service.split("/")[0],service=service.split("/")[1]):
+        return tell("Could not call service {}".format(service))
+    return tell(service)
 
 @assist.action("laterevent")
 def laterevent(entity_id,state,event,switch):
