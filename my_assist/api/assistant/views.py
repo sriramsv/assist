@@ -9,10 +9,13 @@ import logging
 from flask import Blueprint,url_for,redirect,request
 from flask_assistant import Assistant, ask, tell,intent,context_manager
 import requests,os,json,datetime,parsedatetime
-from my_assist.util.helper import get_template
+from my_assist.util.helper import get_template,calc_delay
 from my_assist.extensions import assist,homeassistant,wolfram
 from flask_assistant import ApiAi
 from api_ai.models import Entity
+import itertools
+
+
 blueprint = Blueprint('assist', __name__, url_prefix='/assist')
 assist.init_blueprint(blueprint)
 logging.getLogger('flask_assistant').setLevel(logging.DEBUG)
@@ -58,16 +61,9 @@ def gstatus(entity_id):
 
 @assist.action("lateraction")
 def lateraction(entity_id,delay,switch):
-    if delay:
-        service=homeassistant.get_services_for_entity(entity=entity_id,switch=switch)
-        cal = parsedatetime.Calendar()
-        delaytime,ok=cal.parse(delay)
-        delaytime=datetime.datetime(*delaytime[:6])-datetime.datetime.now()
-        logging.debug(delaytime)
-        seconds=abs(delaytime.total_seconds())
-    else:
-        delay=0
-    data={"service":service,"delay":seconds,"entity_id":entity_id}
+    delay=calc_delay(delay)
+    service=homeassistant.get_services_for_entity(entity_id,switch)
+    data={"service":service,"delay":delay,"entity_id":entity_id}
     s=homeassistant.fire_event("schedule",data)
     return tell("ok scheduled")
 
@@ -75,9 +71,10 @@ def lateraction(entity_id,delay,switch):
 def scheduleaction(entity_id,switch):
     service=homeassistant.get_services_for_entity(entity_id,switch)
     logging.debug("Service:{}".format(service))
-    if not homeassistant.call_service(domain=service.split("/")[0],service=service.split("/")[1]):
+    x=homeassistant.call_service(domain=service.split("/")[0],service=service.split("/")[1],entity_id=entity_id)
+    if not x:
         return tell("Could not call service {}".format(service))
-    return tell(service)
+    return "Done!"
 
 @assist.action("laterevent")
 def laterevent(entity_id,state,event,switch):

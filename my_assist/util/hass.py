@@ -34,9 +34,10 @@ class Hass():
             service=Service(e)
             self.serviceaction[domain]=service
 
-    def call_service(self,domain,service,service_data={}):
+    def call_service(self,domain,service,**kwargs):
         url=self.url+"/services/{}/{}".format(domain,service)
-        return call_post(url,self.headers,service_data)
+        logging.debug(kwargs)
+        return call_post(url,self.headers,data=kwargs)
 
     def get_services_for_entity(self,entity,switch):
         d=entity.split(".")[0]

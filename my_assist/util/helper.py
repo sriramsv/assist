@@ -1,5 +1,8 @@
 
 import os
+from datetime import timedelta
+
+
 def get_template(type,userdata):
     data={
     "type":type,
@@ -11,3 +14,8 @@ def get_template(type,userdata):
 def get_base_url():
     port = os.getenv("PORT")
     return "http://0.0.0.0:"+port
+
+
+def calc_delay(delay):
+    s=timedelta(**delay)
+    return s.seconds
