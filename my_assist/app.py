@@ -39,7 +39,7 @@ def register_blueprints(app):
 
     If the entire flask app consists of only the Assistant, comment out the code below.
     """
-    app.register_blueprint(assistant.views.blueprint)
+    app.register_blueprint(assistant.views.blueprint,url_prefix="/assist")
     app.register_blueprint(web.views.blueprint)
     app.register_blueprint(reminders.views.blueprint)
     logging.info(app.url_map)

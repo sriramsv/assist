@@ -16,30 +16,41 @@ from api_ai.models import Entity
 import itertools
 
 
-blueprint = Blueprint('assist', __name__, url_prefix='/assist')
+blueprint = Blueprint('assist', __name__)
 assist.init_blueprint(blueprint)
 logging.getLogger('flask_assistant').setLevel(logging.DEBUG)
 
-ne=homeassistant.get_entities()
+def getHassEntities():
+    ne=homeassistant.get_entities()
+    a=ApiAi()
+    e=Entity("HassEntities")
+    logging.info(len(ne))
+    for k,v in ne.items():
+        e.add_entry(k,list(v))
 
-a=ApiAi()
-e=Entity("HassEntities")
-logging.info(len(ne))
-for k,v in ne.items():
-    e.add_entry(k,list(v))
+    entitieslist=[str(s) for s in a.agent_entities]
+    logging.debug(entitieslist)
+    if str(e) in entitieslist:
+        a.put_entity(e.name,e.serialize)
+    else:
+        a.post_entity(e.serialize)
 
-entitieslist=[str(s) for s in a.agent_entities]
-logging.debug(entitieslist)
-if str(e) in entitieslist:
-    a.put_entity(e.name,e.serialize)
-else:
-    a.post_entity(e.serialize)
+getHassEntities()
 
+
+
+
+
+
+# Assist Action functions
 @assist.action("Default Fallback Intent")
 def default():
     query =  request.get_json()['result']['resolvedQuery']
     r=wolfram.query(query)
-    res=next(r.results).text
+    try:
+        res=next(r.results).text
+    except:
+        res="Could not find an answer for you at this time"
     return tell(res)
 
 @assist.action('train')
