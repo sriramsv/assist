@@ -10,7 +10,7 @@ from flask import Blueprint,url_for,redirect,request
 from flask_assistant import Assistant, ask, tell,intent,context_manager
 import requests,os,json,datetime,parsedatetime
 from my_assist.util.helper import get_template,calc_delay
-from my_assist.extensions import assist,homeassistant,wolfram
+from my_assist.extensions import assist,homeassistant,wolfram,appdaemon
 from flask_assistant import ApiAi
 from api_ai.models import Entity
 import itertools
@@ -75,8 +75,10 @@ def lateraction(entity_id,delay,switch):
     delay=calc_delay(delay)
     service=homeassistant.get_services_for_entity(entity_id,switch)
     data={"service":service,"delay":delay,"entity_id":entity_id}
-    s=homeassistant.fire_event("schedule",data)
-    return tell("ok scheduled")
+    r=appdaemon.schedule("schedule",data)
+    if not r:
+        return tell("Could not schedule action, please try again later")
+    return tell("Ok scheduled action")
 
 @assist.action("scheduleaction")
 def scheduleaction(entity_id,switch):
@@ -86,10 +88,12 @@ def scheduleaction(entity_id,switch):
     if not x:
         return tell("Could not call service {}".format(service))
     return "Done!"
-
-@assist.action("laterevent")
-def laterevent(entity_id,state,event,switch):
-    service=homeassistant.get_services_for_entity(entity=entity_id,switch=switch)
-    data={"service":service,"state":state,"event":event,"entity_id":entity_id}
-    s=homeassistant.fire_event("stateschedule",data)
-    return tell("ok scheduled action on {} {}".format(state,event))
+@assist.action("lateractiondate")
+def lateractiondate(entity_id,switch,time):
+    service=homeassistant.get_services_for_entity(entity_id,switch)
+    logging.debug("Service:{}".format(service))
+    data={"service":service,"time":time['time'],"entity_id":entity_id}
+    r=appdaemon.schedule("timeschedule",data)
+    if not r:
+        return tell("Could not schedule action, please try again later")
+    return tell("Ok scheduled action")

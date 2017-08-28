@@ -84,6 +84,26 @@ class Hass():
         url=self.url+"/services"
         return call_get(url,self.headers)
 
+
+class AppDaemon():
+    def __init__(self,host,port,use_ssl=False):
+        self.method="https://" if use_ssl else "http://"
+        self.port = port
+        self.host = host
+        self.url = self.method + self.host + ":" + str(self.port)+"/app"
+
+    def laterevent(self,data):
+        url=self.url+"/laterevent"
+
+    def schedule(self,endpoint,data):
+        url=self.url+"/"+endpoint
+        return call_post(url=url,headers=None,data=data)
+
+
+    def laterstate(self,data):
+        url=self.url+"/stateschedule"
+
+
 class Service():
     def __init__(self,data):
         self.d=jsontree.jsontree(data)
