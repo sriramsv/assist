@@ -55,7 +55,7 @@ six==1.10.0
 splitwise==1.1.0
 transitions==0.5.3
 tzlocal==1.4
-urllib3==1.21.1
+urllib3==1.26.5
 Werkzeug==0.12.2
 wolframalpha==3.0
 WTForms==2.1
